@@ -14,11 +14,13 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
   }
 
   create(createProductoDto: CreateProductoDto) {
-    return 'This action adds a new producto';
+    return this.producto.create({
+      data: createProductoDto
+    });
   }
 
   findAll() {
-    return `This action returns all productos`;
+    return this.producto.findMany();
   }
 
   findOne(id: number) {
