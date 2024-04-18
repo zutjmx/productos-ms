@@ -3,3 +3,7 @@ npm run start:dev
 
 -- Crear nuevo recurso
 nest g res productos --no-spec
+
+-- Instalar paquetes
+ npm i class-validator class-transformer
+ 
