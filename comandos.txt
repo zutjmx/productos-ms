@@ -6,4 +6,5 @@ nest g res productos --no-spec
 
 -- Instalar paquetes
  npm i class-validator class-transformer
+ npm i dotenv joi
  
