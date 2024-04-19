@@ -19,8 +19,8 @@ export class ProductosController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productosService.findOne({ id: Number(id) });
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.productosService.findOne(id);
   }
 
   @Patch(':id')

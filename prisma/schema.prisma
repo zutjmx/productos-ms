@@ -18,6 +18,10 @@ model Producto {
   nombre String
   precio Float
 
+  disponible Boolean @default(true)
+
   fechaCreacion      DateTime @default(now())
   fechaActualizacion DateTime @updatedAt
+
+  @@index([disponible])
 }

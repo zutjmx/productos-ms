@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { PaginacionDto } from 'src/common';
 
 @Injectable()
@@ -22,11 +22,12 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
 
   async findAll(paginacionDto : PaginacionDto) {
     const {pagina, limite} = paginacionDto;
-    const totalDePaginas = await this.producto.count();
+    const totalDePaginas = await this.producto.count({where: {disponible: true}});
     const ultimaPagina = Math.ceil(totalDePaginas/limite); 
 
     return {
       data: await this.producto.findMany({
+        where: {disponible:true},
         skip: (pagina - 1) * limite,
         take: limite
       }),
@@ -39,21 +40,21 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
   }
 
   async findOne(
-    productoWhereUniqueInput: Prisma.ProductoWhereUniqueInput
+    id: number
   ) {
-    const producto = await this.producto.findUnique({
-      where: productoWhereUniqueInput
+    const producto = await this.producto.findFirst({
+      where: {id, disponible: true}
     });
 
     if (!producto) {
-      throw new NotFoundException(`No existe el producto con id: ${productoWhereUniqueInput.id}`);
+      throw new NotFoundException(`No existe el producto con id: ${id}`);
     }
 
     return producto;
   }
 
   async update(id: number, updateProductoDto: UpdateProductoDto) {
-    await this.findOne({ id: Number(id) });
+    await this.findOne(id);
     return this.producto.update({
       where: {id},
       data: updateProductoDto
@@ -61,11 +62,23 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
   }
 
   async remove(id: number) {
+    await this.findOne(id);
+    
     // Hard Delete ini
-    await this.findOne({ id: Number(id) });
-    return this.producto.delete({
+    /* return this.producto.delete({
       where: {id}
-    });
+    }); */
     // Hard Delete fin
+
+    // Soft Delete ini
+    const producto = await this.producto.update({
+      where: {id},
+      data: {
+        disponible: false
+      }
+    });
+
+    return producto;
+    // Soft Delete fin
   }
 }

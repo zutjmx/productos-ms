@@ -5,10 +5,18 @@ npm run start:dev
 nest g res productos --no-spec
 
 -- Instalar paquetes
- npm i class-validator class-transformer
- npm i dotenv joi
- npm install prisma --save-dev
- npx prisma init
- npx prisma migrate dev --name init
- npm install @prisma/client
+npm i class-validator class-transformer
+npm i dotenv joi
+npm install prisma --save-dev
+npx prisma init
+npm install @prisma/client
  
+-- Migraciones:
+-- Inicial
+npx prisma migrate dev --name init
+ 
+-- Nuevo campo disponible en tabla producto
+npx prisma migrate dev --name disponible
+
+-- Índice en el campo disponible en tabla producto
+npx prisma migrate dev --name index-disponible
