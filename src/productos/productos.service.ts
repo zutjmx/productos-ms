@@ -60,7 +60,12 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} producto`;
+  async remove(id: number) {
+    // Hard Delete ini
+    await this.findOne({ id: Number(id) });
+    return this.producto.delete({
+      where: {id}
+    });
+    // Hard Delete fin
   }
 }
