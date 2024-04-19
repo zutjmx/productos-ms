@@ -1,7 +1,7 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { PaginacionDto } from 'src/common';
 
 @Injectable()
@@ -38,8 +38,18 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} producto`;
+  async findOne(
+    productoWhereUniqueInput: Prisma.ProductoWhereUniqueInput
+  ) {
+    const producto = await this.producto.findUnique({
+      where: productoWhereUniqueInput
+    });
+
+    if (!producto) {
+      throw new NotFoundException(`No existe el producto con id: ${productoWhereUniqueInput.id}`);
+    }
+
+    return producto;
   }
 
   update(id: number, updateProductoDto: UpdateProductoDto) {
