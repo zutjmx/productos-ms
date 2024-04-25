@@ -86,4 +86,27 @@ export class ProductosService extends PrismaClient implements OnModuleInit {
     return producto;
     // Soft Delete fin
   }
+
+  async validarProducto(ids: number[]) {
+    ids = Array.from(new Set(ids)); //Eliminar ids duplicados
+
+    const productos = await this.producto.findMany({
+      where: {
+        id: {
+          in: ids
+        }
+      }
+    });
+
+    if (productos.length != ids.length) {
+      throw new RpcException({
+        message: `No se encontraron algunos productos en la base de datos`,
+        status: HttpStatus.BAD_REQUEST
+      });
+    }
+
+    return productos;
+
+  }
+
 }
